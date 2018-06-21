@@ -1,4 +1,4 @@
-package com.boya.chatroom.demo;
+package com.boya.chatroom.playground;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

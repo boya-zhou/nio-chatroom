@@ -12,27 +12,32 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 
-public class ListeningHandler implements Callable {
+public class ReadHandler implements Runnable {
 
     private Selector selector;
     private ByteBuffer recvBuf;
 
-    private static Logger logger = LoggerFactory.getLogger(ListeningHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(ReadHandler.class);
     private JacksonSerializer<Response> resSerializer = new JacksonSerializer<>();
 
-    public ListeningHandler(Selector selector, ByteBuffer recvBuf) {
+    public ReadHandler(Selector selector, ByteBuffer recvBuf) {
         this.selector = selector;
         this.recvBuf = recvBuf;
     }
 
     @Override
-    public Response call() {
+    public void run() {
+        listening();
+    }
+
+
+    public void listening() {
 
         try {
 
             while (!Thread.currentThread().isInterrupted()) {
+
                 selector.select();
 
                 for (Iterator<SelectionKey> iterator = selector.selectedKeys().iterator(); iterator.hasNext(); ) {
@@ -58,8 +63,6 @@ public class ListeningHandler implements Callable {
                         logger.info(response.toString());
                         String bodyStr = response.getBody() == null ? "null" : new String(response.getBody(), Charset.forName("UTF-8"));
                         logger.info(bodyStr);
-
-                        return response;
                     }
 
                 }
@@ -70,7 +73,5 @@ public class ListeningHandler implements Callable {
         }
 
         logger.warn("The response is null, something must want wrong");
-        return null;
     }
-
 }

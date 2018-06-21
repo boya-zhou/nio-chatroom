@@ -1,6 +1,5 @@
 package com.boya.chatroom.server;
 
-import com.boya.chatroom.demo.BasicServer;
 import org.junit.Test;
 
 public class BasicServerTest {

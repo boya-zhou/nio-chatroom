@@ -23,6 +23,10 @@ public class ResponseHeader {
         return new ResponseHeader(ResponseCode.SUCCESS);
     }
 
+    public static ResponseHeader successFriendNotOnline(){
+        return new ResponseHeader(ResponseCode.SUCCESS, ResponseType.FRIEND_NOT_ONLINE);
+    }
+
     public static ResponseHeader successFriendLogin(){
         return new ResponseHeader(ResponseCode.SUCCESS, ResponseType.FRIEND_LOGIN);
     }

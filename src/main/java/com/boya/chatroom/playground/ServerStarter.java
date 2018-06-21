@@ -1,8 +1,8 @@
-package com.boya.chatroom.demo;
+package com.boya.chatroom.playground;
 
 import com.boya.chatroom.server.Server;
 
-public class ServerPlayGround {
+public class ServerStarter {
 
     public static void main(String[] args) {
         Server server = new Server();

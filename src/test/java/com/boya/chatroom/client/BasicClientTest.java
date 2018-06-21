@@ -1,7 +1,6 @@
 package com.boya.chatroom.client;
 
-import com.boya.chatroom.demo.BasicClient;
-import com.boya.chatroom.demo.BasicServer;
+import com.boya.chatroom.playground.BasicClient;
 import org.junit.Test;
 
 public class BasicClientTest {

@@ -1,7 +1,7 @@
-package com.boya.chatroom.demo;
+package com.boya.chatroom.playground;
 
 import com.boya.chatroom.Util.JacksonSerializer;
-import com.boya.chatroom.client.Client;
+import com.boya.chatroom.client.NewClient;
 import com.boya.chatroom.domain.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class BasicClient implements Runnable {
 
         try {
 
-            InetAddress inetAddress = InetAddress.getByName(Client.DEFAULT_HOST);
-            InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, Client.DEFAULT_PORT);
+            InetAddress inetAddress = InetAddress.getByName(NewClient.DEFAULT_HOST);
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, NewClient.DEFAULT_PORT);
 
             logger.info("connecting to server");
 

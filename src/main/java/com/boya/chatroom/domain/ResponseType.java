@@ -5,7 +5,8 @@ public enum ResponseType {
     FRIEND_LOGOUT(1, "friend leave"),
     FRIEND_LIST(2, "list of friend online"),
     FRIEND_MESSAGE(3, "friend send message"),
-    FRIEND_REQUEST(4, "a new friend send request");
+    FRIEND_REQUEST(4, "a new friend send request"),
+    FRIEND_NOT_ONLINE(5, "friend not online!");
 
     private int code;
     private String desc;

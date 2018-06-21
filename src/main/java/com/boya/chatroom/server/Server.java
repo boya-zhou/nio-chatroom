@@ -1,6 +1,6 @@
 package com.boya.chatroom.server;
 
-import com.boya.chatroom.demo.BasicClient;
+import com.boya.chatroom.playground.BasicClient;
 import com.boya.chatroom.handler.AcceptHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

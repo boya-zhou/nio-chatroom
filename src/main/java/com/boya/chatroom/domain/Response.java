@@ -51,6 +51,10 @@ public class Response {
         return new Response(ResponseHeader.success());
     }
 
+    public static Response successFriendNotOnline(){
+        return new Response(ResponseHeader.successFriendNotOnline());
+    }
+
     public static Response successFriendLogin(String sender){
         return new Response(sender, ResponseHeader.successFriendLogin());
     }

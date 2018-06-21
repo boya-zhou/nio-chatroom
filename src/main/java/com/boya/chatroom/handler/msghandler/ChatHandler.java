@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatHandler extends MsgBasicHandler {
 
     private static Logger logger = LoggerFactory.getLogger(ChatHandler.class);
+
     public ChatHandler(ConcurrentHashMap<String, SocketChannel> channelMap) {
         super(channelMap);
     }
@@ -24,14 +25,16 @@ public class ChatHandler extends MsgBasicHandler {
         logger.info(channelMap.toString());
 
         Response responseForReceiver = Response.successChat(sender, receiver, message.getBody());
-        Response responseForSender = Response.success();
-
-        if (channelMap.keySet().contains(receiver)){
+        if (channelMap.keySet().contains(receiver)) {
             writeBuffer(channelMap.get(receiver), responseForReceiver);
-        }else{
-            logger.info("The friend is not online");
+
+            Response responseForSender = Response.success();
+            writeBuffer(channelMap.get(sender), responseForSender);
+        } else {
+            // logger.info("The friend is not online");
+            Response responseForSender = Response.successFriendNotOnline();
+            writeBuffer(channelMap.get(sender), responseForSender);
         }
 
-        writeBuffer(channelMap.get(sender), responseForSender);
     }
 }

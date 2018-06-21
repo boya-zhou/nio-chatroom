@@ -1,4 +1,4 @@
-package com.boya.chatroom.demo;
+package com.boya.chatroom.playground;
 
 import com.boya.chatroom.Util.JacksonSerializer;
 import com.boya.chatroom.domain.Message;
