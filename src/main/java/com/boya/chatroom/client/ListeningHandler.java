@@ -13,15 +13,15 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
-public class ReadHandler implements Runnable {
+public class ListeningHandler implements Runnable {
 
     private Selector selector;
     private ByteBuffer recvBuf;
 
-    private static Logger logger = LoggerFactory.getLogger(ReadHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(ListeningHandler.class);
     private JacksonSerializer<Response> resSerializer = new JacksonSerializer<>();
 
-    public ReadHandler(Selector selector, ByteBuffer recvBuf) {
+    public ListeningHandler(Selector selector, ByteBuffer recvBuf) {
         this.selector = selector;
         this.recvBuf = recvBuf;
     }
@@ -31,8 +31,11 @@ public class ReadHandler implements Runnable {
         listening();
     }
 
+    public void shutdown(){
+        Thread.currentThread().interrupt();
+    }
 
-    public void listening() {
+    public void listening(){
 
         try {
 
@@ -50,7 +53,8 @@ public class ReadHandler implements Runnable {
 
                         recvBuf.clear();
                         if (socketChannel.read(recvBuf) == -1) {
-                            logger.info("The remote server is down: " + socketChannel.getRemoteAddress());
+                            socketChannel.close();
+                            throw new ServerDownException();
                         } else {
                             while (socketChannel.read(recvBuf) != 0) {
                                 continue;
@@ -69,9 +73,9 @@ public class ReadHandler implements Runnable {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
-        logger.warn("The response is null, something must want wrong");
+        logger.warn("The response is null, something must went wrong, connect the server for help");
     }
 }

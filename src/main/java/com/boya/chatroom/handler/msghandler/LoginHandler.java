@@ -9,14 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginHandler extends MsgBasicHandler {
 
-    public LoginHandler(ConcurrentHashMap<String, SocketChannel> channelMap) {
-        super(channelMap);
+    public LoginHandler(ConcurrentHashMap<String, SocketChannel> channelMap, Message message) {
+        super(channelMap, message);
     }
 
     @Override
-    public void handle(Message message, SocketChannel socketChannel) throws IOException {
-
-        String sender = message.getMessageHeader().getSender();
+    public void handle(SocketChannel socketChannel) throws IOException {
 
         // login should do two things
         // 1. broadcast the login of new user to all online user
@@ -25,8 +23,9 @@ public class LoginHandler extends MsgBasicHandler {
         // TODO: test if this is approprite
         // synchronized channelmap, send broadcast message to all user
         // prevent other user login while
+        String sender = message.getMessageHeader().getSender();
         Response response = Response.successFriendLogin(sender);
-        broadcast(sender, response);
+        broadcast(response);
         // Add to channel map to show the login status
         channelMap.putIfAbsent(sender, socketChannel);
         Response responseFriendList = Response.successFriendList(sender, channelMap.keySet());

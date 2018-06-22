@@ -13,7 +13,7 @@ public class JacksonSerializerTest {
     Message message = Message.msgNowChat("trillie", "siyuan", "today I want to eat yougurt");
     Response response = Response.successChat("trillie", "siyuan", "I am the most cute lab in the world".getBytes());
 
-    Response response2 = Response.badRequest("boya", "siyuan");
+    Response response2 = Response.badRequest("boya");
 
     Message message2 = Message.msgNowChat("boya", "trillie", "hi there");
 

@@ -6,19 +6,20 @@ import com.boya.chatroom.domain.Response;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MsgBasicHandler implements MsgHandler{
 
     public ConcurrentHashMap<String, SocketChannel> channelMap;
+    public Message message;
 
-    public MsgBasicHandler(ConcurrentHashMap<String, SocketChannel> channelMap) {
+    public MsgBasicHandler(ConcurrentHashMap<String, SocketChannel> channelMap, Message message) {
         this.channelMap = channelMap;
+        this.message = message;
     }
 
-    public void broadcast(String sender, Response response) throws IOException {
+    public void broadcast(Response response) throws IOException {
         synchronized (channelMap) {
             for (SocketChannel onlineChannel : channelMap.values()) {
                 if (onlineChannel.isConnected()) {
@@ -42,7 +43,7 @@ public abstract class MsgBasicHandler implements MsgHandler{
     }
 
     @Override
-    public void handle(Message message, SocketChannel socketChannel) throws IOException {
+    public void handle(SocketChannel socketChannel) throws IOException {
 
     }
 }

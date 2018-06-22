@@ -14,7 +14,8 @@ public class Message {
     private byte[] body;
 
     @JsonCreator
-    public Message(@JsonProperty("messageHeader") MessageHeader messageHeader, @JsonProperty("body") byte[] body) {
+    public Message(@JsonProperty("messageHeader") MessageHeader messageHeader,
+                   @JsonProperty("body") byte[] body) {
         this.messageHeader = messageHeader;
         this.body = body;
     }
@@ -46,14 +47,6 @@ public class Message {
     public byte[] getBody() {
         return body;
     }
-
-//    public void setMessageHeader(MessageHeader messageHeader) {
-//        this.messageHeader = messageHeader;
-//    }
-//
-//    public void setBody(byte[] body) {
-//        this.body = body;
-//    }
 
     @Override
     public String toString() {

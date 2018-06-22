@@ -1,19 +1,16 @@
 package com.boya.chatroom.handler;
 
-import com.boya.chatroom.handler.msghandler.ChatHandler;
-import com.boya.chatroom.handler.msghandler.LoginHandler;
-import com.boya.chatroom.handler.msghandler.LogoutHandler;
-import com.boya.chatroom.handler.msghandler.MsgHandler;
 import com.boya.chatroom.Util.JacksonSerializer;
 import com.boya.chatroom.domain.Message;
 import com.boya.chatroom.domain.MessageType;
+import com.boya.chatroom.exception.EmptyMessageException;
+import com.boya.chatroom.handler.msghandler.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,12 +20,12 @@ public class ReadHandler implements Runnable {
     private static Logger logger = LoggerFactory.getLogger(ReadHandler.class);
 
     private SelectionKey selectionKey;
-    private Selector selector;
     private ConcurrentHashMap<String, SocketChannel> channelMap;
+    private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-    public ReadHandler(SelectionKey selectionKey, Selector selector, ConcurrentHashMap<String, SocketChannel> channelMap) {
+
+    public ReadHandler(SelectionKey selectionKey,  ConcurrentHashMap<String, SocketChannel> channelMap) {
         this.selectionKey = selectionKey;
-        this.selector = selector;
         this.channelMap = channelMap;
     }
 
@@ -36,52 +33,67 @@ public class ReadHandler implements Runnable {
     public void run() {
 
         SocketChannel socketChannel = (SocketChannel) this.selectionKey.channel();
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         byteBuffer.clear();
 
         try {
-            int size = 0;
 
             if (socketChannel.read(byteBuffer) == -1) {
                 logger.info("Connection closed from: " + socketChannel.getRemoteAddress());
+                // remove from channel map as well, this is just for in case since normal remove will be done in logout handler
+                for (String key : channelMap.keySet()) {
+                    if (channelMap.get(key).equals(socketChannel)){
+                        channelMap.remove(socketChannel);
+                    }
+                }
                 socketChannel.close();
+
             } else {
+
                 while (socketChannel.read(byteBuffer) != 0) {
                     continue;
                 }
                 byteBuffer.flip();
+
+                if (byteBuffer.limit() == 0) {
+                    throw new EmptyMessageException();
+                }
+
                 Message message = getMsg(byteBuffer);
-
                 logger.info("Server received: " + message.toString());
-
                 int msgType = message.getMessageHeader().getType().getCode();
-
                 msgDispatcher(socketChannel, message, msgType);
-                // socketChannel.register(selector, SelectionKey.OP_READ);
-                // TODO: check what these two line do
-                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_READ);
-                selectionKey.selector().wakeup();
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+        } catch (EmptyMessageException e) {
+            logger.error(e.getLocalizedMessage(), e);
+        } finally {
+            // register can not save selectionKey, rather it will return a new key
+            // socketChannel.register(selector, SelectionKey.OP_READ);
+
+            // begin next round listening
+            if (selectionKey.isValid() && socketChannel.isConnected()){
+                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_READ);
+                selectionKey.selector().wakeup();
+            }
         }
     }
 
+    // TODO, use spring to handle these four
     private void msgDispatcher(SocketChannel socketChannel, Message message, int msgType) throws IOException {
 
         MsgHandler msgHandler = null;
 
         if (msgType == MessageType.LOGIN.getCode()) {
 
-            msgHandler = new LoginHandler(channelMap);
-            msgHandler.handle(message, socketChannel);
+            msgHandler = new LoginHandler(channelMap, message);
+            msgHandler.handle(socketChannel);
 
         } else if (msgType == MessageType.LOGOUT.getCode()) {
 
-            msgHandler = new LogoutHandler(channelMap);
-            msgHandler.handle(message, socketChannel);
+            msgHandler = new LogoutHandler(channelMap, message);
+            msgHandler.handle(socketChannel);
 
         } else if (msgType == MessageType.ADD_FRIEND.getCode()) {
             // TODO this function not work right now
@@ -95,11 +107,13 @@ public class ReadHandler implements Runnable {
              }**/
 
         } else if (msgType == MessageType.CHAT.getCode()) {
-            msgHandler = new ChatHandler(channelMap);
-            msgHandler.handle(message, socketChannel);
+            msgHandler = new ChatHandler(channelMap, message);
+            msgHandler.handle(socketChannel);
 
         } else {
-            logger.info("Strange, the message format is not correct");
+            logger.info("Strange, the message format is not correct", message);
+            msgHandler = new MsgWrongTypeHandler(channelMap, message);
+            msgHandler.handle(socketChannel);
         }
     }
 

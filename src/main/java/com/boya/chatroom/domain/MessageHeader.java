@@ -66,22 +66,6 @@ public class MessageHeader {
         return localDateTime;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public void setType(MessageType type) {
-        Type = type;
-    }
-
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
-    }
-
     @Override
     public String toString() {
         return "MessageHeader{" +

@@ -38,12 +38,14 @@ public class InputHandler implements Runnable {
         try {
             sendMsg();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
-        return;
-
-
     }
+
+    public void shutdown(){
+        Thread.currentThread().interrupt();
+    }
+
 
     private void sendMsg() throws IOException {
 
@@ -53,19 +55,25 @@ public class InputHandler implements Runnable {
             System.out.println("EXIT for logout, C for continue");
             input = scanner.nextLine();
 
-            if (input.equals(EXIT_OPTION)){
+            if (input.equals(EXIT_OPTION)) {
                 Message message = Message.msgNowLogout(this.nickName);
-                new SendingHandler(socketChannel, sendBuf, msgSerializer).sendMessage(message);
+                SendingUtil.sendMessage(message, socketChannel, sendBuf, msgSerializer);
+
+                System.out.println("Welcome back");
+
+                System.exit(0);
+
+                break;
             }
 
             Message message = msgCreate();
             if (message == null) continue;
-            new SendingHandler(socketChannel, sendBuf, msgSerializer).sendMessage(message);
+            SendingUtil.sendMessage(message, socketChannel, sendBuf, msgSerializer);
 
         }
     }
 
-    private Message msgCreate() {
+    public Message msgCreate() {
 
         System.out.println("Please input your request");
         System.out.println("Select 1 of following options: ");
@@ -101,18 +109,20 @@ public class InputHandler implements Runnable {
                     option = scanner.nextLine();
 
                     if (option.equals("Y")) {
-                        break;
+                        try {
+                            Message message = Message.msgNowLogout(this.nickName);
+                            SendingUtil.sendMessage(message, socketChannel, sendBuf, msgSerializer);
+                        } catch (IOException e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                        System.exit(0);
+
                     } else if (option.equals("N")) {
                         continue;
                     }
                 } while ((!option.equals("Y")) || (!option.equals("N")));
 
-                if (option.equals("Y")) {
-                    break;
-                } else {
-                    continue;
-                }
-
+                continue;
             }
         } while ((request != MessageType.ADD_FRIEND.getCode()) || (request != MessageType.CHAT.getCode()));
 

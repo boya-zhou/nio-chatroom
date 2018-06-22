@@ -76,8 +76,8 @@ public class Response {
         return new Response(sender, receiver, ResponseHeader.successChat(), body);
     }
 
-    public static Response badRequest(String sender, String receiver){
-        return new Response(sender, receiver, ResponseHeader.badRequest());
+    public static Response badRequest(String sender){
+        return new Response(sender, ResponseHeader.badRequest());
     }
 
     public static Response internalError(String sender, String receiver){

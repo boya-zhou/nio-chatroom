@@ -1,23 +1,12 @@
 package com.boya.chatroom.playground;
 
-import com.boya.chatroom.client.NewClient;
+import com.boya.chatroom.client.Client;
 
 public class ClientStarter {
 
     public static void main(String[] args) {
 
-        NewClient client = new NewClient();
+        Client client = new Client();
         client.run();
-
-//        for (int i = 0; i < 1; i++) {
-//            // new Thread(new BasicClient()).start();
-//            new Thread(new NewClient()).start();
-//        }
-//
-//        try {
-//            Thread.currentThread().join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
     }
 }

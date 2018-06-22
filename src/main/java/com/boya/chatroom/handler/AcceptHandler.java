@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.SocketOption;
 import java.net.StandardSocketOptions;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,18 +20,21 @@ public class AcceptHandler implements Runnable {
     public Selector selector;
     public ConcurrentHashMap<String, SocketChannel> channelMap;
 
-    public AcceptHandler(ExecutorService executorService, Selector selector, ConcurrentHashMap<String, SocketChannel> channelMap) {
+    public AcceptHandler(ExecutorService executorService,
+                         Selector selector,
+                         ConcurrentHashMap<String, SocketChannel> channelMap) {
         this.executorService = executorService;
         this.selector = selector;
         this.channelMap = channelMap;
     }
 
     /**
-     * No writable is needed
+     * No writable is needed: stackoverflow EJP
      *
      * @throws IOException
      */
     private void listen() throws IOException {
+
         while (!Thread.currentThread().isInterrupted()) {
 
             this.selector.select();
@@ -48,33 +48,39 @@ public class AcceptHandler implements Runnable {
 
                 if (key.isAcceptable()) {
                     handleAcceptableKeys(key);
-                } else if (key.isReadable()) {
-                    key.interestOps(key.interestOps() & (~SelectionKey.OP_READ));
 
-                    ReadHandler readHandlerTask = new ReadHandler(key, selector, channelMap);
-                    // new Thread(readHandlerTask).start();
+                } else if (key.isReadable()) {
+
+                    key.interestOps(key.interestOps() & (~SelectionKey.OP_READ));
+                    ReadHandler readHandlerTask = new ReadHandler(key, channelMap);
                     executorService.execute(readHandlerTask);
+
                 } else {
-                    System.out.println("when key is not accept, read, write");
+                    logger.info("key is not acceptable nor readable", key);
                 }
 
             }
         }
     }
 
-    public void shutdown() {
+    public void shutdown(){
         Thread.currentThread().interrupt();
     }
 
-    private void handleAcceptableKeys(SelectionKey key) throws IOException {
+    private void handleAcceptableKeys(SelectionKey key) {
 
-        ServerSocketChannel serverSocketChannel1 = (ServerSocketChannel) key.channel();
-        SocketChannel socketChannel = serverSocketChannel1.accept();
-        socketChannel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
-        logger.info("Server connected to client: " + socketChannel.getRemoteAddress());
-
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_READ);
+        try {
+            ServerSocketChannel serverSocketChannel1 = (ServerSocketChannel) key.channel();
+            SocketChannel socketChannel = serverSocketChannel1.accept();
+            socketChannel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
+            logger.info("Server connected to client: " + socketChannel.getRemoteAddress());
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_READ);
+        } catch (ClosedChannelException e) {
+            logger.error(e.getMessage(), e);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
 
     }
 
