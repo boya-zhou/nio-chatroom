@@ -1,4 +1,4 @@
-package com.boya.chatroom.Util;
+package com.boya.chatroom.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

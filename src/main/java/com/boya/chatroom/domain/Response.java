@@ -1,6 +1,6 @@
 package com.boya.chatroom.domain;
 
-import com.boya.chatroom.Util.JacksonSerializer;
+import com.boya.chatroom.util.JacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;

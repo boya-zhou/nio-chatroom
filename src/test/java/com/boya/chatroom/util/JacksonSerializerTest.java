@@ -1,4 +1,4 @@
-package com.boya.chatroom.Util;
+package com.boya.chatroom.util;
 
 import com.boya.chatroom.domain.Message;
 import com.boya.chatroom.domain.Response;

@@ -1,6 +1,6 @@
 package com.boya.chatroom.handler;
 
-import com.boya.chatroom.Util.JacksonSerializer;
+import com.boya.chatroom.util.JacksonSerializer;
 import com.boya.chatroom.domain.Message;
 import com.boya.chatroom.domain.MessageType;
 import com.boya.chatroom.exception.EmptyMessageException;

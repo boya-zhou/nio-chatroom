@@ -1,6 +1,6 @@
 package com.boya.chatroom.client;
 
-import com.boya.chatroom.Util.JacksonSerializer;
+import com.boya.chatroom.util.JacksonSerializer;
 import com.boya.chatroom.domain.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
