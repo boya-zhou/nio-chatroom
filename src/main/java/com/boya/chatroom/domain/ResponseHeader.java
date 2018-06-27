@@ -43,10 +43,6 @@ public class ResponseHeader {
         return new ResponseHeader(ResponseCode.SUCCESS, ResponseType.FRIEND_MESSAGE);
     }
 
-    public static ResponseHeader successAddFriend(){
-        return new ResponseHeader(ResponseCode.SUCCESS, ResponseType.FRIEND_REQUEST);
-    }
-
     public static ResponseHeader badRequest(){
         return new ResponseHeader(ResponseCode.BAD_REQUEST);
     }
@@ -54,7 +50,6 @@ public class ResponseHeader {
     public static ResponseHeader serverError(){
         return new ResponseHeader(ResponseCode.INTERNAL_SERVER_ERROR);
     }
-
 
     public ResponseCode getReponseCode() {
         return reponseCode;
@@ -64,14 +59,6 @@ public class ResponseHeader {
         return responseType;
     }
 
-    public void setReponseCode(ResponseCode reponseCode) {
-        this.reponseCode = reponseCode;
-    }
-
-    public void setResponseType(ResponseType responseType) {
-        this.responseType = responseType;
-    }
-
     @Override
     public String toString() {
         return "ResponseHeader{" +
@@ -79,4 +66,6 @@ public class ResponseHeader {
                 ", responseType=" + responseType +
                 '}';
     }
+
+
 }

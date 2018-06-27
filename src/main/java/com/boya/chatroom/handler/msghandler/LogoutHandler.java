@@ -13,14 +13,21 @@ public class LogoutHandler extends MsgBasicHandler {
         super(channelMap, message);
     }
 
+    /**
+     *
+     * @param socketChannel
+     */
     @Override
-    public void handle(SocketChannel socketChannel) throws IOException {
+    public void handle(SocketChannel socketChannel){
 
         String sender = message.getMessageHeader().getSender();
         Response response = Response.successFriendLogout(sender);
         broadcast(response);
         channelMap.remove(sender, socketChannel);
-        socketChannel.close();
-
+        try {
+            socketChannel.close();
+        } catch (IOException e) {
+            // Since this is a single server app, IOException here doesn't matter
+        }
     }
 }

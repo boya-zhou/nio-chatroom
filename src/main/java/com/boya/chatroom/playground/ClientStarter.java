@@ -6,7 +6,13 @@ public class ClientStarter {
 
     public static void main(String[] args) {
 
-        Client client = new Client();
-        client.run();
+        new Thread(new Client()).start();
+
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Client Starter finishing...");
     }
 }

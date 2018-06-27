@@ -38,12 +38,14 @@ public class MessageHeader {
         return new MessageHeader(sender, MessageType.LOGIN);
     }
 
+
+
     public static MessageHeader msgNowLogout(String sender){
         return new MessageHeader(sender, MessageType.LOGOUT);
     }
 
-    public static MessageHeader msgNowAddFriend(String sender, String receiver){
-        return new MessageHeader(sender, receiver, MessageType.ADD_FRIEND);
+    public static MessageHeader msgFriendsList(String sender){
+        return new MessageHeader(sender, MessageType.FRIENDS_LIST);
     }
 
     public static MessageHeader msgNowChat(String sender, String receiver){

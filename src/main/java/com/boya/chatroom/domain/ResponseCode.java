@@ -21,14 +21,6 @@ public enum ResponseCode {
         return desc;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
     @Override
     public String toString() {
         return "ResponseCode{" +

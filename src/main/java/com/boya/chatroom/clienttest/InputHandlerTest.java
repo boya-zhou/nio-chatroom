@@ -1,8 +1,12 @@
-package com.boya.chatroom.client;
+package com.boya.chatroom.clienttest;
 
+import com.boya.chatroom.client.ChatLogUtil;
+import com.boya.chatroom.client.SendingUtil;
 import com.boya.chatroom.domain.Message;
 import com.boya.chatroom.domain.MessageType;
 import com.boya.chatroom.util.JacksonSerializer;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,23 +16,22 @@ import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class InputHandler implements Runnable {
+public class InputHandlerTest implements Runnable {
 
-    private static Logger logger = LoggerFactory.getLogger(InputHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(InputHandlerTest.class);
     private static String EXIT_OPTION = "EXIT";
     private JacksonSerializer<Message> msgSerializer = new JacksonSerializer<>();
     private LinkedBlockingQueue<String> chatLog;
 
     private ByteBuffer sendBuf;
     private String nickName;
-    private Scanner scanner = new Scanner(System.in).useDelimiter("\n");
     private SocketChannel socketChannel;
 
 
-    public InputHandler(String nickName,
-                        SocketChannel socketChannel,
-                        ByteBuffer sendBuf,
-                        LinkedBlockingQueue<String> chatLog) {
+    public InputHandlerTest(String nickName,
+                            SocketChannel socketChannel,
+                            ByteBuffer sendBuf,
+                            LinkedBlockingQueue<String> chatLog) {
         this.nickName = nickName;
         this.socketChannel = socketChannel;
         this.sendBuf = sendBuf;
@@ -51,8 +54,12 @@ public class InputHandler implements Runnable {
         String input;
         while (true) {
 
-            System.out.println("EXIT for logout, C for continue");
-            input = scanner.nextLine();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            }
+            input = "C";
 
             if (input.equals(EXIT_OPTION)) {
                 Message message = Message.msgNowLogout(this.nickName);
@@ -78,9 +85,7 @@ public class InputHandler implements Runnable {
         System.out.println("2: Check Who is online");
         System.out.println("3: Chat");
 
-
-        Scanner scanner = new Scanner(System.in).useDelimiter("\n");
-        int request = Integer.valueOf(scanner.nextLine());
+        int request = RandomUtils.nextInt(3) + 1;
 
         do {
 
@@ -90,11 +95,10 @@ public class InputHandler implements Runnable {
 
             } else if (request == MessageType.CHAT.getCode()) {
 
-                System.out.println("Please insert your friend name: ");
-                String friendName = scanner.nextLine();
-                System.out.println("Please insert what you want to say to friend: ");
-                String body = scanner.nextLine();
+                // ToDo: change to valid name
+                String friendName = String.valueOf(RandomUtils.nextInt(300));
 
+                String body = RandomStringUtils.randomAlphabetic(8);
                 this.chatLog.add(ChatLogUtil.formatter(body, this.nickName, friendName));
                 return Message.msgNowChat(this.nickName, friendName, body);
 
@@ -110,7 +114,7 @@ public class InputHandler implements Runnable {
                 do {
                     System.out.println("The option is not valid");
                     System.out.println("Do you want to quit? Y for yes and N for no");
-                    option = scanner.nextLine();
+                    option = "Y";
 
                     if (option.equals("Y")) {
                         try {

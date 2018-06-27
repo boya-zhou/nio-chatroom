@@ -37,12 +37,6 @@ public class Response {
         this.responseHeader = responseHeader;
     }
 
-    public Response(String sender, String receiver, ResponseHeader responseHeader) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.responseHeader = responseHeader;
-    }
-
     public Response(ResponseHeader responseHeader){
         this.responseHeader = responseHeader;
     }
@@ -63,10 +57,6 @@ public class Response {
         return new Response(sender, ResponseHeader.successFriendLogout());
     }
 
-    public static Response successFriendRequest(String sender, String receiver){
-        return new Response(sender, receiver, ResponseHeader.successAddFriend());
-    }
-
     public static Response successFriendList(String sender, Set<String> nameList) throws JsonProcessingException {
         JacksonSerializer<Set<String>> jacksonSerializer = new JacksonSerializer<>();
         return new Response(sender, ResponseHeader.successFriendList(), jacksonSerializer.objToStr(nameList).getBytes());
@@ -76,12 +66,12 @@ public class Response {
         return new Response(sender, receiver, ResponseHeader.successChat(), body);
     }
 
-    public static Response badRequest(String sender){
-        return new Response(sender, ResponseHeader.badRequest());
+    public static Response badRequest(){
+        return new Response(ResponseHeader.badRequest());
     }
 
-    public static Response internalError(String sender, String receiver){
-        return new Response(sender, receiver, ResponseHeader.serverError());
+    public static Response internalError(){
+        return new Response(ResponseHeader.serverError());
     }
 
     public String getSender() {
@@ -100,22 +90,6 @@ public class Response {
         return body;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public void setResponseHeader(ResponseHeader responseHeader) {
-        this.responseHeader = responseHeader;
-    }
-
-    public void setBody(byte[] body) {
-        this.body = body;
-    }
-
     @Override
     public String toString() {
         return "Response{" +
@@ -124,5 +98,8 @@ public class Response {
                 ", responseHeader=" + responseHeader +
                 ", body=" + Arrays.toString(body) +
                 '}';
+
     }
+
+
 }

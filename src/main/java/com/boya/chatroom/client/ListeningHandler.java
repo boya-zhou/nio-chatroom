@@ -1,7 +1,8 @@
 package com.boya.chatroom.client;
 
-import com.boya.chatroom.util.JacksonSerializer;
 import com.boya.chatroom.domain.Response;
+import com.boya.chatroom.domain.ResponseType;
+import com.boya.chatroom.util.JacksonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,18 +13,27 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ListeningHandler implements Runnable {
 
+    private static Logger logger = LoggerFactory.getLogger(ListeningHandler.class);
+
     private Selector selector;
     private ByteBuffer recvBuf;
-
-    private static Logger logger = LoggerFactory.getLogger(ListeningHandler.class);
+    private LinkedBlockingQueue<String> chatLog;
+    private LinkedBlockingQueue<Response> systeminfo;
     private JacksonSerializer<Response> resSerializer = new JacksonSerializer<>();
 
-    public ListeningHandler(Selector selector, ByteBuffer recvBuf) {
+    public ListeningHandler(Selector selector,
+                            ByteBuffer recvBuf,
+                            LinkedBlockingQueue<String> chatLog,
+                            LinkedBlockingQueue<Response> systemInfo) {
         this.selector = selector;
         this.recvBuf = recvBuf;
+        this.chatLog = chatLog;
+        this.systeminfo = systemInfo;
     }
 
     @Override
@@ -31,15 +41,12 @@ public class ListeningHandler implements Runnable {
         listening();
     }
 
-    public void shutdown(){
-        Thread.currentThread().interrupt();
-    }
-
     public void listening(){
+
 
         try {
 
-            while (!Thread.currentThread().isInterrupted()) {
+            while (true) {
 
                 selector.select();
 
@@ -67,6 +74,15 @@ public class ListeningHandler implements Runnable {
                         logger.info(response.toString());
                         String bodyStr = response.getBody() == null ? "null" : new String(response.getBody(), Charset.forName("UTF-8"));
                         logger.info(bodyStr);
+
+                        // Do not receive chat message
+                        if ((response.getResponseHeader().getResponseType() == null)){
+                            systeminfo.add(response);
+                        }else{
+                            if(response.getResponseHeader().getResponseType().getCode() == ResponseType.FRIEND_MESSAGE.getCode()){
+                                chatLog.add(ChatLogUtil.formatter(bodyStr, response.getSender(), response.getReceiver()));
+                            }
+                        }
                     }
 
                 }

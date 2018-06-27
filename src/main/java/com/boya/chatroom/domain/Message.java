@@ -32,8 +32,9 @@ public class Message {
         return new Message(MessageHeader.msgNowLogout(sender));
     }
 
-    public static Message msgNowAddFriend(String sender, String receiver, String content) {
-        return new Message(MessageHeader.msgNowAddFriend(sender, receiver), content.getBytes());
+
+    public static Message msgNowFriendsList(String sender) {
+        return new Message(MessageHeader.msgFriendsList(sender));
     }
 
     public static Message msgNowChat(String sender, String receiver, String content) {

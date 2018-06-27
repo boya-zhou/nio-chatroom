@@ -4,7 +4,7 @@ public enum MessageType {
 
     LOGIN(0, "login"),
     LOGOUT(1, "logout"),
-    ADD_FRIEND(2, "add friend"),
+    FRIENDS_LIST(2, "friends list"),
     CHAT(3, "chat");
 
     private int code;
@@ -21,14 +21,6 @@ public enum MessageType {
 
     public String getDesc() {
         return desc;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     @Override
