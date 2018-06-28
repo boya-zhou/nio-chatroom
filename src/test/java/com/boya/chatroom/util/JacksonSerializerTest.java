@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class JacksonSerializerTest {
 
     Message message = Message.msgNowChat("trillie", "siyuan", "today I want to eat yougurt");
-    Response response = Response.successChat("trillie", "siyuan", "I am the most cute lab in the world".getBytes());
+    Response response = Response.successChat("trillie", "siyuan", "I am the most cute lab in the world");
 
     Response response2 = Response.badRequest();
 

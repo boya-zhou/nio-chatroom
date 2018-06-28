@@ -72,7 +72,7 @@ public class ListeningHandler implements Runnable {
                         Response response = resSerializer.strToObj(res, Response.class);
 
                         logger.info(response.toString());
-                        String bodyStr = response.getBody() == null ? "null" : new String(response.getBody(), Charset.forName("UTF-8"));
+                        String bodyStr = response.getBody() == null ? "null" : response.getBody();
                         logger.info(bodyStr);
 
                         // Do not receive chat message

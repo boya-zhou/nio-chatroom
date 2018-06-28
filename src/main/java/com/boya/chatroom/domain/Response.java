@@ -13,20 +13,20 @@ public class Response {
     private String sender;
     private String receiver;
     private ResponseHeader responseHeader;
-    private byte[] body;
+    private String body = "null";
 
     @JsonCreator
     public Response(@JsonProperty("sender") String sender,
                     @JsonProperty("receiver") String receiver,
                     @JsonProperty("responseHeader") ResponseHeader responseHeader,
-                    @JsonProperty("body") byte[] body) {
+                    @JsonProperty("body") String body) {
         this.sender = sender;
         this.receiver = receiver;
         this.responseHeader = responseHeader;
         this.body = body;
     }
 
-    public Response(String sender, ResponseHeader responseHeader, byte[] body) {
+    public Response(String sender, ResponseHeader responseHeader, String body) {
         this.sender = sender;
         this.responseHeader = responseHeader;
         this.body = body;
@@ -59,10 +59,10 @@ public class Response {
 
     public static Response successFriendList(String sender, Set<String> nameList) throws JsonProcessingException {
         JacksonSerializer<Set<String>> jacksonSerializer = new JacksonSerializer<>();
-        return new Response(sender, ResponseHeader.successFriendList(), jacksonSerializer.objToStr(nameList).getBytes());
+        return new Response(sender, ResponseHeader.successFriendList(), jacksonSerializer.objToStr(nameList));
     }
 
-    public static Response successChat(String sender, String receiver, byte[] body){
+    public static Response successChat(String sender, String receiver, String body){
         return new Response(sender, receiver, ResponseHeader.successChat(), body);
     }
 
@@ -86,7 +86,7 @@ public class Response {
         return responseHeader;
     }
 
-    public byte[] getBody() {
+    public String getBody() {
         return body;
     }
 
@@ -96,7 +96,7 @@ public class Response {
                 "sender='" + sender + '\'' +
                 ", receiver='" + receiver + '\'' +
                 ", responseHeader=" + responseHeader +
-                ", body=" + Arrays.toString(body) +
+                ", body=" + body +
                 '}';
 
     }

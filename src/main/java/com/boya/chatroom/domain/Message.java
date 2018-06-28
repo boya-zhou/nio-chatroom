@@ -11,11 +11,11 @@ import java.util.Arrays;
 public class Message {
 
     private MessageHeader messageHeader;
-    private byte[] body;
+    private String body = "null";
 
     @JsonCreator
     public Message(@JsonProperty("messageHeader") MessageHeader messageHeader,
-                   @JsonProperty("body") byte[] body) {
+                   @JsonProperty("body") String body) {
         this.messageHeader = messageHeader;
         this.body = body;
     }
@@ -38,14 +38,14 @@ public class Message {
     }
 
     public static Message msgNowChat(String sender, String receiver, String content) {
-        return new Message(MessageHeader.msgNowChat(sender, receiver), content.getBytes());
+        return new Message(MessageHeader.msgNowChat(sender, receiver), content);
     }
 
     public MessageHeader getMessageHeader() {
         return messageHeader;
     }
 
-    public byte[] getBody() {
+    public String getBody() {
         return body;
     }
 
@@ -54,7 +54,7 @@ public class Message {
 
         return "Message{" +
                 "messageHeader=" + messageHeader +
-                ", body=" + Arrays.toString(body) +
+                ", body=" + body +
                 '}';
     }
 }
