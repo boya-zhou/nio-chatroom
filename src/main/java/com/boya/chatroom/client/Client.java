@@ -37,7 +37,7 @@ public class Client implements Runnable {
 
     private InputHandler inputHandler;
     private ListeningHandler listeningHandler;
-    private ByteBuffer recvBuf = ByteBuffer.allocate(ByteBufferSetting.DEFAULT.getSize());
+    private ByteBuffer recvBuf = ByteBuffer.allocate(ByteBufferSetting.LARGE.getSize());
     private ByteBuffer sendBuf = ByteBuffer.allocate(ByteBufferSetting.DEFAULT.getSize());
     private JacksonSerializer<Message> msgSerializer = new JacksonSerializer<>();
 

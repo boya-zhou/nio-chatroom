@@ -2,7 +2,8 @@ package com.boya.chatroom.enums;
 
 public enum ByteBufferSetting {
 
-    DEFAULT(1024);
+    DEFAULT(1024),
+    LARGE(32*1024);
 
     private int size;
 

@@ -4,6 +4,7 @@ import com.boya.chatroom.enums.ByteBufferSetting;
 import com.boya.chatroom.util.JacksonSerializer;
 import com.boya.chatroom.domain.Message;
 import com.boya.chatroom.domain.Response;
+import com.boya.chatroom.util.ResponseWarpper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,11 +62,10 @@ public abstract class MsgBasicHandler implements MsgHandler {
      * @throws IOException
      */
     public static <T> void writeBuffer(SocketChannel currentChannel, T response) throws JsonProcessingException, IOException {
-        JacksonSerializer<T> jacksonSerializer = new JacksonSerializer<>();
 
         ByteBuffer sendBuf = ByteBuffer.allocate(ByteBufferSetting.DEFAULT.getSize());
         sendBuf.clear();
-        sendBuf.put(jacksonSerializer.objToStr(response).getBytes());
+        sendBuf = ResponseWarpper.addLength(sendBuf, response);
         sendBuf.flip();
 
         while (sendBuf.hasRemaining()) {

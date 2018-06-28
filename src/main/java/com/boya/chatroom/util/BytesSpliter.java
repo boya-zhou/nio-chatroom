@@ -6,7 +6,7 @@ import java.util.List;
 
 public class BytesSpliter {
 
-    public static List<byte[]> splitBytes(ByteBuffer byteBuffer, byte[] receivedBytes) {
+    public static List<byte[]> splitBytes(ByteBuffer byteBuffer) {
 
         int length;
         List<byte[]> resultList = new ArrayList<>();

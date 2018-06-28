@@ -13,10 +13,10 @@ public class ResponseWarpper {
 
     public static <T> ByteBuffer addLength(ByteBuffer byteBuffer, T pojo){
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] bytes = new byte[0];
+        JacksonSerializer<T> jacksonSerializer = new JacksonSerializer<>();
+        byte[] bytes;
         try {
-            bytes = objectMapper.writeValueAsBytes(pojo);
+            bytes = jacksonSerializer.objTobytes(pojo);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage(), e);
             return byteBuffer;

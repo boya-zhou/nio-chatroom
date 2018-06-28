@@ -2,6 +2,7 @@ package com.boya.chatroom.client;
 
 import com.boya.chatroom.domain.Response;
 import com.boya.chatroom.domain.ResponseType;
+import com.boya.chatroom.util.BytesSpliter;
 import com.boya.chatroom.util.JacksonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Iterator;
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ListeningHandler implements Runnable {
@@ -41,7 +42,7 @@ public class ListeningHandler implements Runnable {
         listening();
     }
 
-    public void listening(){
+    public void listening() {
 
 
         try {
@@ -67,20 +68,25 @@ public class ListeningHandler implements Runnable {
                                 continue;
                             }
                         }
+
                         recvBuf.flip();
-                        String res = new String(recvBuf.array(), Charset.forName("UTF-8"));
-                        Response response = resSerializer.strToObj(res, Response.class);
 
-                        logger.info(response.toString());
-                        String bodyStr = response.getBody() == null ? "null" : response.getBody();
-                        logger.info(bodyStr);
+                        List<byte[]> resultList = BytesSpliter.splitBytes(recvBuf);
 
-                        // Do not receive chat message
-                        if ((response.getResponseHeader().getResponseType() == null)){
-                            systeminfo.add(response);
-                        }else{
-                            if(response.getResponseHeader().getResponseType().getCode() == ResponseType.FRIEND_MESSAGE.getCode()){
-                                chatLog.add(ChatLogUtil.formatter(bodyStr, response.getSender(), response.getReceiver()));
+                        for (byte[] eleBytes : resultList) {
+                            Response response = resSerializer.bytesToObj(eleBytes, Response.class);
+
+                            logger.info(response.toString());
+                            String bodyStr = response.getBody() == null ? "null" : response.getBody();
+                            logger.info(bodyStr);
+
+                            // Do not receive chat message
+                            if ((response.getResponseHeader().getResponseType() == null)) {
+                                systeminfo.add(response);
+                            } else {
+                                if (response.getResponseHeader().getResponseType().getCode() == ResponseType.FRIEND_MESSAGE.getCode()) {
+                                    chatLog.add(ChatLogUtil.formatter(bodyStr, response.getSender(), response.getReceiver()));
+                                }
                             }
                         }
                     }

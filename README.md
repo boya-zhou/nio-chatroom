@@ -17,30 +17,33 @@ A single server multi clients chat room based on java nio
 #### points worth focus and improvements
  *  synchronization. Server, client both multi-threaded
     * server
-        * ConcurrentHashMap for client nickname and socket channel relation shared by multi clients
+        * ConcurrentHashMap<client, socket channel> shared by multi clients
     * client
         * LinkedBlockingQueue<ChatLog> shared by input and listen threads
         * ConcurrentHashMap<Receiver, ArrayBlockingQueue> same as above
     * nio tool internally multi thread safe
  *  exception handling
+    * general
+        * for general function, throw exception
+        * for caller, try and catch
     * server
         * first priority : server can keep running correctly
             * what exception can disturb server?
-            * what exception can make server run not correct?
+            * what exception can make server run uncorrected?
         * accurate show what, where and why of exception
     * client
         * throw to top of the stack, warp the exception as human language
  *  testing
-    * concurrency environment testing 
-    * integrating testing
- * resource safely close
-    * socket leak
+    * concurrency environment testing
+        * client side listener packet splitter
+    * integrate testing
+        * ??? 
+ *  resource safely close
+    * socket leak 
     * thread 
 
  
  #### design pattern used
  * template method pattern 
  * static factory method(messy, any management solution?)
- 
- #### SOLID principle review whole design
  
